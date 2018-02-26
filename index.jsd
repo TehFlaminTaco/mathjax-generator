@@ -1,0 +1,75 @@
+<script type="server/javascript">
+	const badMatch = /^\/generator($|\?)/
+
+	if(request.url.match(badMatch)){
+		response.writeHead(302, {'Location': 'https://a-ta.co' + request.url.replace(badMatch, "/generator/$1")});
+		response.end('');
+	}
+</script>
+
+<HTML>
+	<head>
+		<title>MathJax Imagifier</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<meta charset="utf-8">
+		
+		<script src="https://a-ta.co/content/ace/ace.js"></script>
+
+		<script>
+			function update_output(){
+				var output_img = `https://a-ta.co/mathjax/${checkbox.checked ? "" : "%24"}!${btoa(editor.getValue())}.svg`;
+				document.getElementById("output").setAttribute("src", output_img);
+				document.getElementById("output2").setAttribute("src", output_img);
+				document.getElementById("image_src").value = output_img;
+			}
+
+			window.onload = function(){
+				window.checkbox = document.getElementById("checkbox");
+				checkbox.onclick = update_output;
+
+				window.editor = ace.edit("textentry");
+				editor.getSession().setMode("ace/mode/latex");
+				editor.on("change", update_output)
+
+			}
+		</script>
+	</head>
+	<body>
+		<div id="inline_toggle">
+			<input type="checkbox" checked="true" id="checkbox">Inline?
+		</div>
+		<table>
+			<tr>
+				<td id='title'>
+					Make MathJax
+				</td>
+			</tr>
+			<tr>
+				<td>
+
+					<table>
+						<tr>
+							<td style="max-width:50%; width:50%;">
+								<textarea id='textentry'></textarea>
+							</td>
+							<td style="max-width:50%;" class='desktopPreview outHolder'>
+								<img id='output' src='https://a-ta.co/mathjax/%5CLaTeX.svg'>
+							</td>
+						</tr>
+					</table>
+
+				</td>
+			</tr>
+			<tr class='outHolder'>
+				<td class='mobilePreview'>
+					<img id='output2' src='https://a-ta.co/mathjax/%5CLaTeX.svg'>
+				</td>
+			</tr>
+			<tr style="height:1em;">
+				<td>
+					<input id='image_src' type="textarea" readonly=1 value="https://a-ta.co/mathjax/%5CLaTeX.svg">
+				</td>
+			</td>
+		</table>
+	</body>
+</HTML>
